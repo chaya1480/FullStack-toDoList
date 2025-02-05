@@ -1,9 +1,10 @@
 
   import axios from 'axios';
   import { getToken, logout } from './authService';
-  
+  import { API_URL } from './api';
+
   const apiClient = axios.create({
-      baseURL: "http://localhost:5280",  
+      baseURL: API_URL,  
       headers: {
         'Content-Type': 'application/json',
       },

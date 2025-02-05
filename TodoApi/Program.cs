@@ -11,9 +11,20 @@ using Task = TodoApi.Task;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// builder.Services.AddDbContext<ToDoDbContext>(options =>
+//     options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
+//     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.40-mysql")));
+
+var connectionString = builder.Configuration.GetConnectionString("ToDoDB") 
+                       ?? Environment.GetEnvironmentVariable("ToDoDB");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection string for 'ToDoDB' is not set.");
+}
+
 builder.Services.AddDbContext<ToDoDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
-    Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.40-mysql")));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddCors(options =>
 {

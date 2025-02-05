@@ -1,6 +1,6 @@
 import axios from 'axios';
-
-const API_URL = "http://localhost:5280";
+import { API_URL } from './api';
+// const API_URL = "http://localhost:5280";
 
 
 export const login = async (username, password) => {

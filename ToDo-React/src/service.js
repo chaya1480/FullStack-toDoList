@@ -1,4 +1,4 @@
-import apiClient from './axiosConfig'; // לוודא שזה ייבוא נכון!
+import apiClient from './axiosConfig'; 
 
 // הוספת Interceptor לתפיסת שגיאות
 apiClient.interceptors.response.use(
@@ -13,7 +13,6 @@ apiClient.interceptors.response.use(
 
 export default {
   getTasks: async () => {
-    console.log("Calling getTasks..."); // בדיקה
     const result = await apiClient.get('/tasks');
     return result.data;
   },
@@ -29,7 +28,6 @@ export default {
   },
 
   deleteTask: async (id) => {
-    console.log('deleteTask', id);
     const result = await apiClient.delete(`/tasks/${id}`);
     return result.data;
   },

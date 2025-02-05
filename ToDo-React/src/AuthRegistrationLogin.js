@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { login, register } from './authService';
 
 function AuthRegistrationLogin() {
-    const [isLoginMode, setIsLoginMode] = useState(true); // מצב כניסה/הרשמה
+    const [isLoginMode, setIsLoginMode] = useState(true); 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     
