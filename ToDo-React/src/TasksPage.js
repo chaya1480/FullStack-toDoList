@@ -110,7 +110,7 @@ function TasksPage() {
 
     const handleLogout = () => {
         logout();
-        window.location.href = '/'; 
+        window.location.href = '/';
     };
 
     return (
@@ -123,6 +123,7 @@ function TasksPage() {
             </header>
             <section className="main" style={{ display: "block" }}>
                 <ul className="todo-list">
+                    console.log("Data from API:", tasks);
                     {todos.map(todo => (
                         <li key={todo.id} className={todo.isComplete ? "completed" : ""}>
                             <input
