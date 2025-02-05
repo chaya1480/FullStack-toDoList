@@ -288,7 +288,7 @@ app.MapPost("/tasks", async (ToDoDbContext context, HttpContext httpContext, Tas
 }).RequireAuthorization();
 
 
-app.MapPut("/tasks/{id}", async (ToDoDbContext context, HttpContext httpContext, int id, bool isComplete) =>
+app.MapPut("/tasks/{id}", async (ToDoDbContext context, HttpContext httpContext, int id, Task updatedTask) =>
 {
     var userId = GetUserIdFromToken(httpContext);
     if (userId == null) return Results.Unauthorized();
@@ -296,7 +296,7 @@ app.MapPut("/tasks/{id}", async (ToDoDbContext context, HttpContext httpContext,
     var existingTask = await context.Tasks.FindAsync(id);
     if (existingTask == null || existingTask.UserId != userId) return Results.NotFound();
 
-    existingTask.IsComplete = isComplete;
+    existingTask.IsComplete = updatedTask.IsComplete;
     // existingTask.Name = updatedTask.Name;
     await context.SaveChangesAsync();
 
