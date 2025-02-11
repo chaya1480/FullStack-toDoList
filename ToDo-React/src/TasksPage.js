@@ -92,6 +92,7 @@ function TasksPage() {
                 }
                 const payload = JSON.parse(atob(parts[1]));
                 setUsername(payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]);
+                console.log("username:" + username)
             // } catch (error) {
             //     console.error("Error decoding token:", error);
             //     setUsername(""); 
