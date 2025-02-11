@@ -1,14 +1,6 @@
 
-  import axios from 'axios';
   import { getToken, logout } from './authService';
-  import { API_URL } from './api';
-
-  const apiClient = axios.create({
-      baseURL: API_URL,  
-      headers: {
-        'Content-Type': 'application/json',
-      },
-  });
+  import apiClient from './api';  
   
   apiClient.interceptors.request.use((config) => {
       const token = getToken();

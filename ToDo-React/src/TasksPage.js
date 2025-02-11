@@ -73,15 +73,35 @@ function TasksPage() {
     const [todos, setTodos] = useState([]);
     const [username, setUsername] = useState("");
 
+    // useEffect(() => {
+    //     const token = localStorage.getItem("token");
+    //     if (token) {
+    //         const payload = JSON.parse(atob(token.split('.')[1]));
+    //         setUsername(payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]);
+    //     }
+    //     getTodos();
+    // }, []);
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (token) {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            setUsername(payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]);
+    
+        if (token && token !== "undefined" && token !== "null") {
+            try {
+                const parts = token.split('.');
+                if (parts.length !== 3) {
+                    throw new Error("Invalid JWT format");
+                }
+    
+                const payload = JSON.parse(atob(parts[1]));
+                setUsername(payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]);
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                setUsername(""); // איפוס שם המשתמש במקרה של טוקן שגוי
+            }
         }
+    
         getTodos();
     }, []);
-
+    
     async function getTodos() {
         try {
             const todos = await service.getTasks();
@@ -118,12 +138,11 @@ function TasksPage() {
             <header className="header">
                 <h1>Welcome, {username}</h1>
                 <form onSubmit={createTodo}>
-                    <input className="new-todo" placeholder="!אין דבר שאי אפשר להשלים – פשוט תתחילי" value={newTodo} onChange={(e) => setNewTodo(e.target.value)} />
+                    <input className="new-todo" placeholder='!אין דבר שא"א להשלים – פשוט תתחילי' value={newTodo} onChange={(e) => setNewTodo(e.target.value)} />
                 </form>
             </header>
             <section className="main" style={{ display: "block" }}>
                 <ul className="todo-list">
-                    console.log("Data from API:", tasks);
                     {todos.map(todo => (
                         <li key={todo.id} className={todo.isComplete ? "completed" : ""}>
                             <input
