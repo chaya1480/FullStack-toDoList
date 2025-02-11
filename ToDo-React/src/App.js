@@ -20,7 +20,6 @@ function App() {
 
   function isAuthenticated() {
     const token = localStorage.getItem("token");
-    console.log("Checking Authentication - Token:", token);
     return token !== null;
   }
 

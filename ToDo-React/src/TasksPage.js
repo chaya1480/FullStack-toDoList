@@ -85,18 +85,17 @@ function TasksPage() {
         const token = localStorage.getItem("token");
     
         if (token && token !== "undefined" && token !== "null") {
-            try {
+            // try {
                 const parts = token.split('.');
                 if (parts.length !== 3) {
                     throw new Error("Invalid JWT format");
                 }
-    
                 const payload = JSON.parse(atob(parts[1]));
                 setUsername(payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]);
-            } catch (error) {
-                console.error("Error decoding token:", error);
-                setUsername(""); // איפוס שם המשתמש במקרה של טוקן שגוי
-            }
+            // } catch (error) {
+            //     console.error("Error decoding token:", error);
+            //     setUsername(""); 
+            // }
         }
     
         getTodos();
