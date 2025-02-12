@@ -1,17 +1,17 @@
-// require("dotenv").config();
-// const express = require("express");
-// const axios = require("axios");
-// const cors = require("cors");
+require("dotenv").config();
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
 
-// const app = express();
-// app.use(cors());
+const app = express();
+app.use(cors());
 
-// const PORT = process.env.PORT || 3000;
-// const RENDER_API_KEY = process.env.RENDER_API_KEY;
+const PORT = process.env.PORT || 3000;
+const RENDER_API_KEY = process.env.RENDER_API_KEY;
 
-// app.get("/", (req, res) => {
-//   res.send("אבא תודההההה, השרת עובד!!!!");
-// });
+app.get("/", (req, res) => {
+  res.send("אבא תודההההה, השרת עובד!!!!");
+});
 
 // app.get("/services", async (req, res) => {
 //   try {
@@ -23,10 +23,6 @@
 //     console.error("Error fetching services:", error);
 //     res.status(500).json({ error: "Failed to fetch services" });
 //   }
-// });
-
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
 // });
 app.get("/services", async (req, res) => {
   try {
@@ -78,4 +74,8 @@ app.get("/services", async (req, res) => {
       console.error("Error fetching services:", error);
       res.status(500).send("<h1>Error fetching services</h1>");
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
