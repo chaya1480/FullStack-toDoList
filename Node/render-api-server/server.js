@@ -9,6 +9,10 @@ app.use(cors());
 const PORT = process.env.PORT || 3000;
 const RENDER_API_KEY = process.env.RENDER_API_KEY;
 
+app.get("/", (req, res) => {
+  res.send("אבא תודההההה, השרת עובד!!!!");
+});
+
 app.get("/services", async (req, res) => {
     try {
         const response = await axios.get("https://api.render.com/v1/services", {
