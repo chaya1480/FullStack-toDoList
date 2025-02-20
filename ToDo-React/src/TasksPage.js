@@ -33,7 +33,6 @@
 //     useEffect(() => {
 //         getTodos();
 //     }, []);
-
 //     return (
 //         <section className="todoapp">
 //             <header className="header">
@@ -102,15 +101,25 @@ function TasksPage() {
         getTodos();
     }, []);
     
+    // async function getTodos() {
+    //     try {
+    //         const todos = await service.getTasks();
+    //         setTodos(todos);
+    //     } catch (error) {
+    //         console.error("Error fetching tasks:", error);
+    //     }
+    // }
     async function getTodos() {
         try {
             const todos = await service.getTasks();
-            setTodos(todos);
+            console.log("Fetched todos:", todos); // בדיקת הערך המתקבל
+            setTodos(Array.isArray(todos) ? todos : []);
         } catch (error) {
             console.error("Error fetching tasks:", error);
+            setTodos([]); // מניעת קריסה במקרה של שגיאה
         }
     }
-
+    
     async function createTodo(e) {
         e.preventDefault();
         await service.addTask(newTodo);

@@ -14,6 +14,7 @@ apiClient.interceptors.response.use(
 export default {
   getTasks: async () => {
     const result = await apiClient.get('/tasks');
+    console.log(result.data); // בדיקה לראות את המבנה של הנתונים
     return result.data;
   },
 
