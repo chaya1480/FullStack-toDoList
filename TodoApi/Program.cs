@@ -72,6 +72,7 @@ using (var scope = builder.Services.BuildServiceProvider().CreateScope())
     }
 }
 
+Console.WriteLine($"Connection String: {connectionString}");
 
 var app = builder.Build();
 
