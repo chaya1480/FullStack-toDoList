@@ -57,20 +57,20 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-using (var scope = builder.Services.BuildServiceProvider().CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ToDoDbContext>();
-    try
-    {
-        dbContext.Database.OpenConnection();
-        Console.WriteLine("✅ Successfully connected to the database!");
-        dbContext.Database.CloseConnection();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Database connection failed: {ex.Message}");
-    }
-}
+// using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+// {
+//     var dbContext = scope.ServiceProvider.GetRequiredService<ToDoDbContext>();
+//     try
+//     {
+//         dbContext.Database.OpenConnection();
+//         Console.WriteLine("✅ Successfully connected to the database!");
+//         dbContext.Database.CloseConnection();
+//     }
+//     catch (Exception ex)
+//     {
+//         Console.WriteLine($"❌ Database connection failed: {ex.Message}");
+//     }
+// }
 
 Console.WriteLine($"Connection String: {connectionString}");
 
