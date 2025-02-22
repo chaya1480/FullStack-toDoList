@@ -26,6 +26,9 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+builder.Services.AddDbContext<ToDoDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -53,6 +56,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ToDoDbContext>();
+    try
+    {
+        dbContext.Database.OpenConnection();
+        Console.WriteLine("✅ Successfully connected to the database!");
+        dbContext.Database.CloseConnection();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Database connection failed: {ex.Message}");
+    }
+}
+
 
 var app = builder.Build();
 
