@@ -9,7 +9,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || "http://localhost:5280",  
+    baseURL: "http://localhost:5280" || process.env.REACT_APP_API_URL ,  
     headers: { 'Content-Type': 'application/json' }
 });
 console.log("API URL:", process.env.REACT_APP_API_URL);
