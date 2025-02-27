@@ -170,30 +170,63 @@ app.MapPost("/register", async (ToDoDbContext context, User newUser) =>
 
 
 // 🔹 התחברות והפקת טוקן עם ה- UserId
+// app.MapPost("/login", async (ToDoDbContext context, LoginRequest request) =>
+// {
+//     var user = context.Users.FirstOrDefault(u => u.Username == request.Username);
+//     if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+//         return Results.Unauthorized();
+
+//     var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"));
+//     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+//     var claims = new[]
+//     {
+//         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+//         new Claim(ClaimTypes.Name, user.Username)
+//     };
+
+//     var token = new JwtSecurityToken(
+//         claims: claims,
+//         expires: DateTime.UtcNow.AddHours(2),
+//         signingCredentials: creds
+//     );
+
+//     var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+//     return Results.Ok(new { token = tokenString });
+// });
 app.MapPost("/login", async (ToDoDbContext context, LoginRequest request) =>
 {
-    var user = context.Users.FirstOrDefault(u => u.Username == request.Username);
-    if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-        return Results.Unauthorized();
-
-    var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"));
-    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-    var claims = new[]
+    try
     {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Name, user.Username)
-    };
+        var user = context.Users.FirstOrDefault(u => u.Username == request.Username);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            return Results.Unauthorized();
 
-    var token = new JwtSecurityToken(
-        claims: claims,
-        expires: DateTime.UtcNow.AddHours(2),
-        signingCredentials: creds
-    );
+        var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-    var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username)
+        };
 
-    return Results.Ok(new { token = tokenString });
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(2),
+            signingCredentials: creds
+        );
+
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+        return Results.Ok(new { token = tokenString });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error in /login: {ex.Message}");
+        return Results.Problem("An error occurred while processing your request.");
+    }
 });
 
 app.Run();

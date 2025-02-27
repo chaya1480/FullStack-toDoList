@@ -1,10 +1,3 @@
-// export function logout() {
-//     localStorage.removeItem("token");
-// }
-
-// export function getToken() {
-//     return localStorage.getItem("token");
-// }
 import apiClient from './api';  
 export const login = async (username, password) => {
     try {
