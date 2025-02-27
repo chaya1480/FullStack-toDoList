@@ -48,9 +48,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", policy =>
     {
-        policy.WithOrigins("https://fullstack-todolist-rcli.onrender.com") // כתובת ה-Frontend
+        policy.WithOrigins("https://fullstack-todolist-rcli.onrender.com") 
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
