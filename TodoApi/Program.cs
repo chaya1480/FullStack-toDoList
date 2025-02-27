@@ -34,9 +34,18 @@ builder.Services.AddDbContext<ToDoDbContext>(options =>
 
 Console.WriteLine($"Using Connection String: {connectionString}");
 
+// builder.Services.AddCors(options =>
+// {
+//     options.AddDefaultPolicy(policy =>
+//     {
+//         policy.AllowAnyOrigin()
+//               .AllowAnyMethod()
+//               .AllowAnyHeader();
+//     });
+// });
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyMethod()
@@ -66,29 +75,15 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// using (var scope = builder.Services.BuildServiceProvider().CreateScope())
-// {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<ToDoDbContext>();
-//     try
-//     {
-//         dbContext.Database.OpenConnection();
-//         Console.WriteLine("✅ Successfully connected to the database!");
-//         dbContext.Database.CloseConnection();
-//     }
-//     catch (Exception ex)
-//     {
-//         Console.WriteLine($"❌ Database connection failed: {ex.Message}");
-//     }
-// }
-
 Console.WriteLine($"Connection String: {connectionString}");
 
 var app = builder.Build();
+app.UseCors("AllowAll");
 
-app.UseCors(policy =>
-    policy.AllowAnyOrigin()
-          .AllowAnyMethod()
-          .AllowAnyHeader());
+// app.UseCors(policy =>
+//     policy.AllowAnyOrigin()
+//           .AllowAnyMethod()
+//           .AllowAnyHeader());
 
 // if (app.Environment.IsDevelopment())
 // {
