@@ -46,13 +46,14 @@ Console.WriteLine($"Using Connection String: {connectionString}");
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowSpecificOrigin", policy =>
     {
-        policy.AllowAnyOrigin()
-            .AllowAnyMethod()
+        policy.WithOrigins("https://fullstack-todolist-rcli.onrender.com") // כתובת ה-Frontend
+              .AllowAnyMethod()
               .AllowAnyHeader();
     });
 });
+
 
 var key = Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111");
 
@@ -79,7 +80,7 @@ builder.Services.AddSwaggerGen();
 Console.WriteLine($"Connection String: {connectionString}");
 
 var app = builder.Build();
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecificOrigin");
 
 // app.UseCors(policy =>
 //     policy.AllowAnyOrigin()
