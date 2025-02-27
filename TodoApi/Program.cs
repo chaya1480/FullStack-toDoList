@@ -26,8 +26,7 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-builder.Services.AddDbContext<ToDoDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+Console.WriteLine($"Using Connection String: {connectionString}");
 
 builder.Services.AddCors(options =>
 {
@@ -40,6 +39,10 @@ builder.Services.AddCors(options =>
 });
 
 var key = Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"); 
+
+// var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? "DefaultFallbackSecret";
+// var key = Encoding.ASCII.GetBytes(jwtSecret);
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
