@@ -50,8 +50,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("https://fullstack-todolist-rcli.onrender.com") 
               .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+              .AllowAnyHeader();
     });
 });
 
