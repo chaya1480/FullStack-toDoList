@@ -31,8 +31,8 @@ if (string.IsNullOrEmpty(connectionString))
 
 builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
 Console.WriteLine($"Using Connection String: {connectionString}");
+
 
 // builder.Services.AddCors(options =>
 // {
@@ -77,8 +77,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-Console.WriteLine($"Connection String: {connectionString}");
-
 var app = builder.Build();
 app.UseCors("AllowSpecificOrigin");
 
@@ -92,6 +90,7 @@ app.UseCors("AllowSpecificOrigin");
 app.UseSwagger();
 app.UseSwaggerUI();
 // }
+app.UseDeveloperExceptionPage();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -197,36 +196,47 @@ app.MapPost("/register", async (ToDoDbContext context, User newUser) =>
 // });
 app.MapPost("/login", async (ToDoDbContext context, LoginRequest request) =>
 {
-    try
+    Console.WriteLine($"Attempting login for: {request.Username}");
+
+    var usersCount = context.Users.Count();
+    Console.WriteLine($"Total users in DB: {usersCount}");
+
+    var user = context.Users.FirstOrDefault(u => u.Username == request.Username);
+    
+    if (user == null)
     {
-        var user = context.Users.FirstOrDefault(u => u.Username == request.Username);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            return Results.Unauthorized();
-
-        var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
-        };
-
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(2),
-            signingCredentials: creds
-        );
-
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return Results.Ok(new { token = tokenString });
+        Console.WriteLine("User not found");
+        return Results.Unauthorized();
     }
-    catch (Exception ex)
+
+    if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
     {
-        Console.WriteLine($"Error in /login: {ex.Message}");
-        return Results.Problem("An error occurred while processing your request.");
+        Console.WriteLine("Invalid password");
+        return Results.Unauthorized();
     }
+
+    Console.WriteLine($"User {user.Username} authenticated");
+
+    var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var claims = new[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.Username)
+    };
+
+    var token = new JwtSecurityToken(
+        claims: claims,
+        expires: DateTime.UtcNow.AddHours(2),
+        signingCredentials: creds
+    );
+
+    var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+    
+    Console.WriteLine("Token generated successfully");
+
+    return Results.Ok(new { token = tokenString });
 });
 
 app.Run();
