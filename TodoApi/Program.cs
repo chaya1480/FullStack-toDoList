@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 // var connectionString = builder.Configuration.GetConnectionString("ToDoDB") 
 //                        ?? Environment.GetEnvironmentVariable("ToDoDB");
 
-var envConnectionString = Environment.GetEnvironmentVariable("ToDoDB");
+var envConnectionString = Environment.GetEnvironmentVariable("ToDoDB")?.Trim();
 var connectionString = !string.IsNullOrEmpty(envConnectionString)
     ? envConnectionString
     : builder.Configuration.GetConnectionString("ToDoDB");
