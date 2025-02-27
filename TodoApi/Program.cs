@@ -15,8 +15,14 @@ var builder = WebApplication.CreateBuilder(args);
 //     options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
 //     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.40-mysql")));
 
-var connectionString = builder.Configuration.GetConnectionString("ToDoDB") 
-                       ?? Environment.GetEnvironmentVariable("ToDoDB");
+// var connectionString = builder.Configuration.GetConnectionString("ToDoDB") 
+//                        ?? Environment.GetEnvironmentVariable("ToDoDB");
+
+var envConnectionString = Environment.GetEnvironmentVariable("ToDoDB");
+var connectionString = !string.IsNullOrEmpty(envConnectionString)
+    ? envConnectionString
+    : builder.Configuration.GetConnectionString("ToDoDB");
+
 
 if (string.IsNullOrEmpty(connectionString))
 {
