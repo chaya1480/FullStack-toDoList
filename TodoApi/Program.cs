@@ -14,41 +14,39 @@ var builder = WebApplication.CreateBuilder(args);
 // builder.Services.AddDbContext<ToDoDbContext>(options =>
 //     options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
 //     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.40-mysql")));
+//איידי
+builder.Services.AddLogging();
+
+builder.Services.AddDbContext<ToDoDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
+                     new MySqlServerVersion(new Version(8, 0, 40)),
+                     mysqlOptions => mysqlOptions.EnableRetryOnFailure()));
+
+//עבר לTODODBCONTEXT:
 
 // var connectionString = builder.Configuration.GetConnectionString("ToDoDB") 
 //                        ?? Environment.GetEnvironmentVariable("ToDoDB");
 
-var envConnectionString = Environment.GetEnvironmentVariable("ToDoDB")?.Trim();
-var connectionString = !string.IsNullOrEmpty(envConnectionString)
-    ? envConnectionString
-    : builder.Configuration.GetConnectionString("ToDoDB");
+// var envConnectionString = Environment.GetEnvironmentVariable("ToDoDB")?.Trim();
+// var connectionString = !string.IsNullOrEmpty(envConnectionString)
+//     ? envConnectionString
+//     : builder.Configuration.GetConnectionString("ToDoDB");
 
 
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Connection string for 'ToDoDB' is not set.");
-}
-
-builder.Services.AddDbContext<ToDoDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-Console.WriteLine($"Using Connection String: {connectionString}");
-
-
-// builder.Services.AddCors(options =>
+// if (string.IsNullOrEmpty(connectionString))
 // {
-//     options.AddDefaultPolicy(policy =>
-//     {
-//         policy.AllowAnyOrigin()
-//               .AllowAnyMethod()
-//               .AllowAnyHeader();
-//     });
-// });
+//     throw new InvalidOperationException("Connection string for 'ToDoDB' is not set.");
+// }
+
+// builder.Services.AddDbContext<ToDoDbContext>(options =>
+//     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+// Console.WriteLine($"Using Connection String: {connectionString}");
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://fullstack-todolist-rcli.onrender.com") 
+        policy.WithOrigins("http://localhost:3000", "https://fullstack-todolist-rcli.onrender.com")
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -78,12 +76,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.UseCors("AllowSpecificOrigin");
-
-// app.UseCors(policy =>
-//     policy.AllowAnyOrigin()
-//           .AllowAnyMethod()
-//           .AllowAnyHeader());
+app.UseCors("AllowAll");
 
 // if (app.Environment.IsDevelopment())
 // {
@@ -91,12 +84,11 @@ app.UseSwagger();
 app.UseSwaggerUI();
 // }
 app.UseDeveloperExceptionPage();
-
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/", () => "Thank you Tate!!");
-
 
 app.MapGet("/tasks", async (ToDoDbContext context, HttpContext httpContext) =>
 {
