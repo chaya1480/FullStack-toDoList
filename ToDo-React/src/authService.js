@@ -35,7 +35,6 @@ export async function register(username, password) {
 
         const loginResponse = await login({ username, password });
         window.location.href = "/tasks";
-
         return loginResponse;
     } catch (error) {
         console.error("Registration failed:", error.response?.data || error.message);

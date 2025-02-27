@@ -8,10 +8,17 @@
 
 import axios from 'axios';
 
+// const apiClient = axios.create({
+//     baseURL: "http://localhost:5280" || process.env.REACT_APP_API_URL ,  
+//     headers: { 'Content-Type': 'application/json' }
+// });
+// console.log("API URL:", process.env.REACT_APP_API_URL);
+
+// export default apiClient;
+
 const apiClient = axios.create({
-    baseURL: "http://localhost:5280" || process.env.REACT_APP_API_URL ,  
+    baseURL: process.env.REACT_APP_API_URL || "http://localhost:5280",  
     headers: { 'Content-Type': 'application/json' }
 });
 console.log("API URL:", process.env.REACT_APP_API_URL);
-
 export default apiClient;
