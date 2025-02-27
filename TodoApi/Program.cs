@@ -43,17 +43,18 @@ Console.WriteLine($"Using Connection String: {connectionString}");
 //               .AllowAnyHeader();
 //     });
 // });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyMethod()
+            .AllowAnyMethod()
               .AllowAnyHeader();
     });
 });
 
-var key = Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"); 
+var key = Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111");
 
 // var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? "DefaultFallbackSecret";
 // var key = Encoding.ASCII.GetBytes(jwtSecret);
@@ -87,8 +88,8 @@ app.UseCors("AllowAll");
 
 // if (app.Environment.IsDevelopment())
 // {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 // }
 
 app.UseAuthentication();
