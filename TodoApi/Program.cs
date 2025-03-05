@@ -15,32 +15,32 @@ var builder = WebApplication.CreateBuilder(args);
 //     options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
 //     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.40-mysql")));
 //איידי
-builder.Services.AddLogging();
+// builder.Services.AddLogging();
 
-builder.Services.AddDbContext<ToDoDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
-                     new MySqlServerVersion(new Version(8, 0, 40)),
-                     mysqlOptions => mysqlOptions.EnableRetryOnFailure()));
-
-//עבר לTODODBCONTEXT:
+// builder.Services.AddDbContext<ToDoDbContext>(options =>
+//     options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
+//                      new MySqlServerVersion(new Version(8, 0, 40)),
+//                      mysqlOptions => mysqlOptions.EnableRetryOnFailure()));
 
 // var connectionString = builder.Configuration.GetConnectionString("ToDoDB") 
 //                        ?? Environment.GetEnvironmentVariable("ToDoDB");
 
-// var envConnectionString = Environment.GetEnvironmentVariable("ToDoDB")?.Trim();
-// var connectionString = !string.IsNullOrEmpty(envConnectionString)
-//     ? envConnectionString
-//     : builder.Configuration.GetConnectionString("ToDoDB");
+//עבר לTODODBCONTEXT:
 
 
-// if (string.IsNullOrEmpty(connectionString))
-// {
-//     throw new InvalidOperationException("Connection string for 'ToDoDB' is not set.");
-// }
+var envConnectionString = Environment.GetEnvironmentVariable("ToDoDB")?.Trim();
+var connectionString = !string.IsNullOrEmpty(envConnectionString)
+    ? envConnectionString
+    : builder.Configuration.GetConnectionString("ToDoDB");
 
-// builder.Services.AddDbContext<ToDoDbContext>(options =>
-//     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-// Console.WriteLine($"Using Connection String: {connectionString}");
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection string for 'ToDoDB' is not set.");
+}
+
+builder.Services.AddDbContext<ToDoDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+Console.WriteLine($"Using Connection String: {connectionString}");
 
 builder.Services.AddCors(options =>
 {
@@ -78,12 +78,11 @@ var app = builder.Build();
 app.UseCors("AllowAllOrigins"); 
 
 // if (app.Environment.IsDevelopment())
-// {
+// {// }
 app.UseSwagger();
 app.UseSwaggerUI();
-// }
+
 app.UseDeveloperExceptionPage();
-app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -160,53 +159,13 @@ app.MapPost("/register", async (ToDoDbContext context, User newUser) =>
 
 
 // 🔹 התחברות והפקת טוקן עם ה- UserId
-app.MapPost("/login", async (ToDoDbContext context, LoginRequest request) =>
-{
-    var user = context.Users.FirstOrDefault(u => u.Username == request.Username);
-    if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-        return Results.Unauthorized();
-
-    var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"));
-    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-    var claims = new[]
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Name, user.Username)
-    };
-
-    var token = new JwtSecurityToken(
-        claims: claims,
-        expires: DateTime.UtcNow.AddHours(2),
-        signingCredentials: creds
-    );
-
-    var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-    return Results.Ok(new { token = tokenString });
-});
 // app.MapPost("/login", async (ToDoDbContext context, LoginRequest request) =>
 // {
 //     Console.WriteLine($"Attempting login for: {request.Username}");
 
-//     var usersCount = context.Users.Count();
-//     Console.WriteLine($"Total users in DB: {usersCount}");
-
 //     var user = context.Users.FirstOrDefault(u => u.Username == request.Username);
-    
-//     if (user == null)
-//     {
-//         Console.WriteLine("User not found");
+//     if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
 //         return Results.Unauthorized();
-//     }
-
-//     if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-//     {
-//         Console.WriteLine("Invalid password");
-//         return Results.Unauthorized();
-//     }
-
-//     Console.WriteLine($"User {user.Username} authenticated");
 
 //     var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"));
 //     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -224,11 +183,50 @@ app.MapPost("/login", async (ToDoDbContext context, LoginRequest request) =>
 //     );
 
 //     var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-    
-//     Console.WriteLine("Token generated successfully");
 
 //     return Results.Ok(new { token = tokenString });
 // });
+app.MapPost("/login", async (ToDoDbContext context, LoginRequest request) =>
+{
+    Console.WriteLine($"Attempting login for: {request.Username}");
+    var usersCount = context.Users.Count();
+    Console.WriteLine($"Total users in DB: {usersCount}");
+    var user = context.Users.FirstOrDefault(u => u.Username == request.Username);
+    if (user == null)
+    {
+        Console.WriteLine("User not found");
+        return Results.Unauthorized();
+    }
+
+    if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+    {
+        Console.WriteLine("Invalid password");
+        return Results.Unauthorized();
+    }
+
+    Console.WriteLine($"User {user.Username} authenticated");
+
+    var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MySuperSecretKey1234567890123456111111111"));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var claims = new[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.Username)
+    };
+
+    var token = new JwtSecurityToken(
+        claims: claims,
+        expires: DateTime.UtcNow.AddHours(2),
+        signingCredentials: creds
+    );
+
+    var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+    
+    Console.WriteLine("Token generated successfully");
+
+    return Results.Ok(new { token = tokenString });
+});
 
 app.Run();
 
