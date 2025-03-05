@@ -29,26 +29,27 @@ function App() {
     setTodos(todos);
   }
 
-  async function createTodo(e) {
-    e.preventDefault();
-    await service.addTask(newTodo);
-    setNewTodo("");
-    await getTodos();
-  }
+  // async function createTodo(e) {
+  //   e.preventDefault();
+  //   await service.addTask(newTodo);
+  //   setNewTodo("");
+  //   await getTodos();
+  // }
 
-  async function updateCompleted(todo, isComplete) {
-    await service.setCompleted(todo.id, isComplete);
-    await getTodos();
-  }
+  // async function updateCompleted(todo, isComplete) {
+  //   await service.setCompleted(todo.id, isComplete);
+  //   await getTodos();
+  // }
 
-  async function deleteTodo(id) {
-    await service.deleteTask(id);
-    await getTodos();
-  }
+  // async function deleteTodo(id) {
+  //   await service.deleteTask(id);
+  //   await getTodos();
+  // }
 
   return (
     <Routes>
       <Route path="/" element={isAuthenticated() ? <Navigate to="/tasks" /> : <AuthRegistrationLogin />} />
+      <Route path="/login" element={<AuthRegistrationLogin />} />
       <Route path="/tasks" element={isAuthenticated() ? <TasksPage /> : <Navigate to="/" />} />
     </Routes>
   );
