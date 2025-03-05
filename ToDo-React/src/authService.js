@@ -22,8 +22,8 @@ export async function register(username, password) {
 
     try {
         const response = await apiClient.post('/register', { 
-            username: username, 
-            passwordHash: password  
+            Username: username, 
+            PannerNodeasswordHash: password  
         });
 
         const loginResponse = await login({ username, password });

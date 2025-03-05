@@ -230,7 +230,6 @@ app.MapPost("/login", async (ToDoDbContext context, LoginRequest request) =>
 
 app.Run();
 
-// 🔹 פונקציה לשליפת UserId מהטוקן
 int? GetUserIdFromToken(HttpContext httpContext)
 {
     var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
