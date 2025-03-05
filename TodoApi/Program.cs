@@ -41,6 +41,8 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 Console.WriteLine($"Using Connection String: {connectionString}");
+Console.WriteLine($"Environment Variable ToDoDB: {Environment.GetEnvironmentVariable("ToDoDB")}");
+Console.WriteLine($"Configuration ToDoDB: {builder.Configuration.GetConnectionString("ToDoDB")}");
 
 builder.Services.AddCors(options =>
 {
