@@ -49,7 +49,6 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={isAuthenticated() ? <Navigate to="/tasks" /> : <AuthRegistrationLogin />} />
-      <Route path="/login" element={<AuthRegistrationLogin />} />
       <Route path="/tasks" element={isAuthenticated() ? <TasksPage /> : <Navigate to="/" />} />
     </Routes>
   );
